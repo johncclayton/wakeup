@@ -1,0 +1,9 @@
+[Unit]
+Description = Wakeup service using IR sensor 
+After = network.target
+
+[Service]
+ExecStart = /home/pi/wakeup/service.sh
+
+[Install]
+WantedBy = multi-user.target
