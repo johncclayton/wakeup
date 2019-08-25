@@ -13,3 +13,28 @@ The OS is configured to enable the screen saver in a standard fashion.
 Runtime
 =======
 Simply by installing a standard systemctl based control job to run the code. 
+
+Development
+===========
+These instructions work well on a RPI4 installed with Buster (around August 2019)
+
+    $ sudo apt install virtualenv virtualenvwrapper    
+    $ mkvirtualenv -p /usr/bin/python3 stats
+    $ workon stats
+    $ pip install -r requirements.txt
+
+
+Build
+=====
+To produce PyPi compatible package. 
+
+Setup
+-----
+First ensure you have the latest tools 
+
+    $ python -m pip install --upgrade setuptools wheel twine
+
+Make packages
+-------------
+
+    $ python setup.py sdist bdist_wheel
