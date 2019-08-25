@@ -1,3 +1,5 @@
 rpi.gpio
 pigpio
 gpiozero
+prometheus_client
+pyzmq
