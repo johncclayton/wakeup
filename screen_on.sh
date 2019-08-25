@@ -1,4 +1,5 @@
 #!/bin/bash
+export DISPLAY=:0
 tvservice --preferred
 sleep 1
 xdotool mousemove_relative 0 1
