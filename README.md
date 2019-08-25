@@ -26,6 +26,11 @@ These instructions work well on a RPI4 installed with Buster (around August 2019
     $ workon stats
     $ pip install -r requirements.txt
 
+You'll want to open the firewall for prometheus metrics collection (9091) as well as the ZMQ publisher (8000). 
+
+    $ sudo ufw allow 9091/tcp
+    $ sudo ufw allow 8000/tcp
+
 
 Build
 =====
