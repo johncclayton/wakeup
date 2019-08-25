@@ -4,15 +4,18 @@ To ensure that when I walk into the room that the monitor attached to the Raspbe
 
 How
 ===
-A movement/IR detector is attached to the GPIO.  This drives a monitor process that wakes the HDMI system.  
+A movement/IR detector is attached to the Raspberry PI GPIO pins.  Python code monitors the GPIO signal and wakes the HDMI system.
 
-Sleep
-=====
+A <TBD> task runs to keep a browser loaded at a specific page.  This page points to my Dashboard.  This web task is not
+part of this project. 
+
+Sleep / Screen Saver
+====================
 The OS is configured to enable the screen saver in a standard fashion. 
 
 Runtime
 =======
-Simply by installing a standard systemctl based control job to run the code. 
+Simply by installing a standard systemctl based control job to run the command that this package installs.
 
 Development
 ===========
