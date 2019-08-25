@@ -13,9 +13,13 @@ Sleep / Screen Saver
 ====================
 The OS is configured to enable the screen saver in a standard fashion. 
 
-Runtime
-=======
-Simply by installing a standard systemctl based control job to run the command that this package installs.
+Quick Start
+===========
+I don't care about dev I just want to use it. 
+
+Do this: 
+
+    $ pip install wakeup
 
 Development
 ===========
@@ -25,10 +29,12 @@ These instructions work well on a RPI4 installed with Buster (around August 2019
     $ mkvirtualenv -p /usr/bin/python3 stats
     $ workon stats
     $ pip install -r requirements.txt
+    $ python setup.py develop
 
 You'll want to open the firewall for prometheus metrics collection (9091) as well as the ZMQ publisher (8000). 
 
     $ sudo ufw allow 9091/tcp
+    $ sudo ufw allow 9092/tcp
     $ sudo ufw allow 8000/tcp
 
 
