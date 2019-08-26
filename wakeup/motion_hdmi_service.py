@@ -1,5 +1,5 @@
 import zmq, time, sys, json, datetime
-from prometheus_client import start_http_server, Gauge, Counter
+from prometheus_client import start_http_server, Gauge, Counter, Summary
 from wakeup.configuration import get_pub_settings, get_sub_settings
 from pkg_resources import resource_filename
 import os
@@ -8,9 +8,20 @@ import os
 (sub_connect_host, sub_connect_port) = get_sub_settings()
 
 hdmi_prom_port = os.getenv("MOTION_HDMI_PROM_PORT", 9092)
+script_path = resource_filename(__name__, "screen_on.sh")
 
-MOVEMENT_HDMI_STATE = Gauge('movement_hdmi_state', 'The state of the HDMI controller')
-MOVEMENT_HDMI_COUNTER = Gauge('movement_hdmi_detected_received_count', 'The number of movement detected messages received over ZMQ')
+MOVEMENT_HDMI_REQUEST_TIME = Summary('movement_hdmi_request_seconds', 'The time taken to process incoming requests')
+MOVEMENT_HDMI_DETECTION_EVENTS = Counter('movement_hdmi_is_moving_count', 'The total number of positive movement events detected')
+
+def force_on():
+    os.system(script_path)
+
+@MOVEMENT_HDMI_REQUEST_TIME.time()
+def process_request(msg):
+    if msg["type"] == "motion" and "state" in msg:
+        if msg["state"] == 1:
+            MOVEMENT_HDMI_DETECTION_EVENTS.inc()
+            force_on()
 
 def main_func():
     context = zmq.Context()
@@ -19,43 +30,12 @@ def main_func():
     socket.setsockopt(zmq.SUBSCRIBE, b"motion")
 
     start_http_server(hdmi_prom_port)
-    print("Motion HDMI service started - on port {0}".format(hdmi_prom_port))
-
-    DELAY_VALUE = 20
-    counter = 0
-    last_screen_on = None
+    print("Motion HDMI service started - prometheus metrics are on port {0}".format(hdmi_prom_port))
 
     try:
         while True:
             [address, content] = socket.recv_multipart()
-            msg = json.loads(content)
-            if msg["type"] == "motion":
-                state = msg["state"]
-                if state == 1:
-                    counter = DELAY_VALUE
-                    print("Somebody moved!")
-                    MOVEMENT_HDMI_COUNTER.inc(1)
-
-            now = datetime.datetime.now()
-            counter = counter - 1
-
-            if counter <= 0:
-                # ok, time to switch off the screen!
-                print("Boy it's boring in here... somebody move!")
-                MOVEMENT_HDMI_STATE.set(0)
-            else:
-                if last_screen_on is None or (now - last_screen_on).seconds > 60:
-                    last_screen_on = now
-
-                    MOVEMENT_HDMI_STATE.set(2)
-
-                    # ok, it's time to FORCE the screen on
-                    script_path = resource_filename(__name__, "screen_on.sh")
-                    print("Forcing the screen on using: {0}".format(script_path))
-                    os.system(script_path)
-                else:
-                    print("Counter is at: {0} - ignoring events for 60 seconds...".format(counter))
-                    MOVEMENT_HDMI_STATE.set(1)
+            process_request(json.loads(content))
     except KeyboardInterrupt:
         print("KeyboardInterrupt - graceful shutdown")
                     

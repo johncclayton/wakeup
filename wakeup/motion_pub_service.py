@@ -10,8 +10,8 @@ import time, zmq, json, os
     pub_prom_port,
     pub_time_delay_sec) = get_pub_settings()
 
-MOVEMENT_DETECTION = Counter('movement_detected', 'Incremented by 1 when movement is detected')
-MOVEMENT_MSG_SENT = Counter('movement_msg_published', 'Counter of the number of messages sent over ZMQ')
+MOVEMENT_DETECTION = Counter('movement_pub_detected_total', 'Incremented by 1 when movement is detected')
+MOVEMENT_MSG_SENT = Counter('movement_pub_sent_total', 'Counter of the number of messages sent over ZMQ')
 
 def main_func():
     sensor = MotionSensor(pub_sensor_pin)
@@ -28,7 +28,7 @@ def main_func():
             state = 0
             if sensor.motion_detected:
                 state = 1
-                MOVEMENT_DETECTION.inc(1)
+                MOVEMENT_DETECTION.inc()
 
             msg = {
                 "type": "motion",
