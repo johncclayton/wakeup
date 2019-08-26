@@ -11,7 +11,7 @@ hdmi_prom_port = os.getenv("MOTION_HDMI_PROM_PORT", 9092)
 script_path = resource_filename(__name__, "screen_on.sh")
 
 MOVEMENT_HDMI_REQUEST_TIME = Summary('movement_hdmi_request_seconds', 'The time taken to process incoming requests')
-MOVEMENT_HDMI_DETECTION_EVENTS = Counter('movement_hdmi_is_moving_count', 'The total number of positive movement events detected')
+MOVEMENT_HDMI_DETECTION_EVENTS = Counter('movement_hdmi_is_moving', 'The total number of positive movement events detected')
 
 def force_on():
     os.system(script_path)
