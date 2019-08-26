@@ -1,0 +1,13 @@
+[Unit]
+Description = Responds to the published IR state by powering on the HDMI
+After = network.target wakeup_pub.service
+
+[Service]
+ExecStart = /home/pi/.virtualenvs/stats/bin/motion_hdmi
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy = multi-user.target

@@ -21,13 +21,12 @@ setuptools.setup(
         'pyzmq==18.1.0',
     ],
     scripts = [
-        'screen_on.sh'
+        'wakeup/screen_on.sh'
     ],
     entry_points={
         'console_scripts': [
-            'motion_hdmi = motion_hdmi_service:main_func',
-            'motion_prom_client = motion_prom_client:main_func',
-            'motion_pub_service = motion_pub_service:main_func',
+            'motion_hdmi = wakeup.motion_hdmi_service:main_func',
+            'motion_pub_service = wakeup.motion_pub_service:main_func',
         ]
     },
     classifiers=[
