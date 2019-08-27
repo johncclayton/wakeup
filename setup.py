@@ -26,7 +26,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'motion_hdmi = wakeup.motion_hdmi_service:main_func',
-            'motion_pub_service = wakeup.motion_pub_service:main_func',
+            'motion_pub = wakeup.motion_pub_service:main_func',
         ]
     },
     classifiers=[
