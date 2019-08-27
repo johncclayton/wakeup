@@ -3,7 +3,7 @@ Description = Publish the state of the IR sensor over ZeroMQ
 After = network.target
 
 [Service]
-ExecStart = /home/pi/.virtualenvs/stats/bin/motion_pub_service
+ExecStart = /home/pi/.virtualenvs/stats/bin/motion_pub
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
