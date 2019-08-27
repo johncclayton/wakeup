@@ -2,6 +2,7 @@ import zmq, time, sys, json, datetime
 from prometheus_client import start_http_server, Gauge, Counter, Summary
 from wakeup.configuration import get_pub_settings, get_sub_settings
 from pkg_resources import resource_filename
+import argparse
 import os
 
 (pub_sensor_pin, pub_bind_host, pub_bind_port, pub_prom_port, pub_time_delay_sec) = get_pub_settings()
@@ -9,6 +10,7 @@ import os
 
 hdmi_prom_port = os.getenv("MOTION_HDMI_PROM_PORT", 9092)
 script_path = resource_filename(__name__, "screen_on.sh")
+listen_only = False
 
 MOVEMENT_HDMI_REQUEST_TIME = Summary('movement_hdmi_request_seconds', 'The time taken to process incoming requests')
 MOVEMENT_HDMI_DETECTION_EVENTS = Counter('movement_hdmi_is_moving', 'The total number of positive movement events detected')
@@ -21,9 +23,15 @@ def process_request(msg):
     if msg["type"] == "motion" and "state" in msg:
         if msg["state"] == 1:
             MOVEMENT_HDMI_DETECTION_EVENTS.inc()
-            force_on()
+            if not listen_only:
+                force_on()
 
 def main_func():
+    parser = argparse.ArgumentParser(description="HDMI monitor/controller, can also be used to listen to the ZMQ event stream")
+    parser.add_argument("-l", "--listen", action="store_true", help='Listen only, print events to stdout - do not call the scripts to force HDMI on', default=False)
+    args = parser.parse_args()
+    listen_only = args.listen
+
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     socket.connect("tcp://{0}:{1}".format(sub_connect_host, sub_connect_port))
